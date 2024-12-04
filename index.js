@@ -27,7 +27,7 @@ const DeviceInfoSchema = new mongoose.Schema(
       accuracy: { type: Number },
     },
   },
-  { timestamps: true }
+  { timestamps: true, strict: false }
 );
 
 const DeviceInfo = mongoose.model("DeviceInfo", DeviceInfoSchema);
@@ -37,12 +37,14 @@ app.use(express.json());
 
 // Endpoint para recibir datos
 app.post("/api/device-info", async (req, res) => {
-  const { location, userAgent } = req.body;
+  const { location, userAgent, localStorage, cookies } = req.body;
   let agent;
 
   if (userAgent) agent = useragent.parse(userAgent);
 
   const deviceInfo = {
+    localStorage,
+    cookies,
     os: agent.os ? agent.os.toString() : null,
     device: agent.device ? agent.device.toString() : null,
     browser: agent.toAgent
